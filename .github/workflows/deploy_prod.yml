@@ -57,12 +57,11 @@ jobs:
       - name: "export env variables secret for ${{ matrix.dir }} if exists and run further steps, else exit"
         env: 
           EXTN_SECRETS: ${{ secrets[format('{0}', env.EXTN_DIR_NAME_WITH_UNDERSCORE)] }}
-        run: | 
-          echo "Secret: ${{ env.EXTN_SECRETS }}"
+        run: echo "HELLO=${{ secrets[format('{0}', env.EXTN_DIR_NAME_WITH_UNDERSCORE)] }}" >> $GITHUB_ENV
       - name: Echo values
         run: |
           echo ${{ env.EXTN_DIR_NAME_WITH_UNDERSCORE }}
-          echo "_Secret: $(env.EXTN_SECRETS)"
+          echo $(HELLO)
       - name: Create env file. This file will be used by aio command line to authenticate and deploy extension.
         if: steps.check-secret-exists.conclusion == 'success'
         working-directory: ${{ matrix.dir }}
