@@ -78,13 +78,13 @@ jobs:
             exit 0
           fi
       - name: Setup AIO CLI
-        if: steps.check-secret-exists.conclusion == 'success'  
+        if: ${{ env.EXTN_SECRETS }} != ''  
         working-directory: ${{ matrix.dir }}
         run: |
           # echo "Current directory: $(pwd)"
           sudo npm install -g @adobe/aio-cli
       - name: deploy to prod
-        if: steps.check-secret-exists.conclusion == 'success'
+        if: ${{ env.EXTN_SECRETS }} != ''
         working-directory: ${{ matrix.dir }}
         run: |
           # echo "Current directory: $(pwd)"
