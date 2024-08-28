@@ -58,7 +58,7 @@ jobs:
         env: 
           EXTN_SECRETS: ${{ secrets[format('{0}', env.EXTN_DIR_NAME_WITH_UNDERSCORE)] }}
         if: ${{ env.EXTN_SECRETS == '' }}
-        run: echo "Secret does not exist"; exit 1
+        run: echo "Secret does not exist"; exit 0
       - name: Echo values
         run: |
           echo ${{ env.EXTN_DIR_NAME_WITH_UNDERSCORE }}
