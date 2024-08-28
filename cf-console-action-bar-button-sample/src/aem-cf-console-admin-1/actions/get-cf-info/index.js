@@ -11,7 +11,7 @@ async function main(params) {
     // 'info' is the default level if not set
     logger.info('Calling the get-cf-info action')
 
-    // log parameters, only if params.LOG_LEVEL === 'debug' 1
+    // log parameters, only if params.LOG_LEVEL === 'debug' 2
     logger.debug(stringParameters(params))
     const requiredParams = ['aemHost', 'fragmentIds', 'authConfig']
     const requiredHeaders = []
