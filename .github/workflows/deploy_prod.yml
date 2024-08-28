@@ -75,7 +75,7 @@ jobs:
         working-directory: ${{ matrix.dir }}
         run: |
           # echo "Current directory: $(pwd)"
-          npm install -g @adobe/aio-cli
+          sudo npm install -g @adobe/aio-cli
       - name: deploy to prod
         working-directory: ${{ matrix.dir }}
         run: |
