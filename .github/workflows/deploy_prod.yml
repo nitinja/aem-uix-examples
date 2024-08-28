@@ -60,9 +60,6 @@ jobs:
           echo "EXTN_SECRETS=$EXTN_SECRETS" >> $GITHUB_ENV
           touch .env
           echo "$EXTN_SECRETS" >> .env
-          else
-            echo "No env variables secret found for ${{ matrix.dir }}. No further steps will be executed."
-          fi
       # - name: Echo values
       #   run: |
       #     echo ${{ env.EXTN_DIR_NAME_WITH_UNDERSCORE }}
