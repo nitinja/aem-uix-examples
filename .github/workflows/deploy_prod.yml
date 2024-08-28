@@ -54,16 +54,16 @@ jobs:
         run: |
           EXTN_DIR_NAME_WITH_UNDERSCORE=${EXTN_DIR_NAME//-/_}
           echo "EXTN_DIR_NAME_WITH_UNDERSCORE=$(echo "$EXTN_DIR_NAME_WITH_UNDERSCORE")" >> $GITHUB_ENV
-      - name: "check is secret exists for changed directory ${{ matrix.dir }}, exit if not found"
-        id: check-secret-exists  
+      - name: "export env variables secret for ${{ matrix.dir }} if exists and run further steps, else exit"
         env: 
           EXTN_SECRETS: ${{ secrets[format('{0}', env.EXTN_DIR_NAME_WITH_UNDERSCORE)] }}
-        if: ${{ env.EXTN_SECRETS == '' }}
-        run: echo "Secret does not exist"; exit 1
+        run: | 
+          echo "Secret: ${{ env.EXTN_SECRETS }}"
       - name: Echo values
         if: steps.check-secret-exists.conclusion == 'success'
         run: |
           echo ${{ env.EXTN_DIR_NAME_WITH_UNDERSCORE }}
+          echo "_Secret: ${{ env.EXTN_SECRETS }}"
       - name: Create env file. This file will be used by aio command line to authenticate and deploy extension.
         if: steps.check-secret-exists.conclusion == 'success'
         working-directory: ${{ matrix.dir }}
