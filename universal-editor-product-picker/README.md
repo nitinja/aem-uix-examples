@@ -1,6 +1,6 @@
-# Custom AEM Content Fragment Console Action Bar Button
+# uex-product-picker
 
-A sample extension showcasing adding a button to the Action Bar in AEM Content Fragment Console.
+Welcome to my Adobe I/O Application!
 
 ## Setup
 
@@ -79,36 +79,3 @@ and make sure you have the below config added
     }
   } 
 ```
-
-test change 122123
-132ssd1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
