@@ -20,7 +20,7 @@ module.exports = (config) => {
     const yamlData = yaml.load(yamlFile);
     const { extensions } = yamlData;
 
-    // For now we are ok just to read the first extension point to build the preview link
+    // For now we are ok just to read the first extension point to build the preview link 1
     const extension = Object.keys(extensions)[0];
     const previewData = {
       extensionPoint: extension,
