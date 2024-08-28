@@ -55,22 +55,21 @@ jobs:
           EXTN_DIR_NAME_WITH_UNDERSCORE=${EXTN_DIR_NAME//-/_}
           echo "EXTN_DIR_NAME_WITH_UNDERSCORE=$(echo "$EXTN_DIR_NAME_WITH_UNDERSCORE")" >> $GITHUB_ENV
       - name: "export env variables secret for ${{ matrix.dir }} if exists and run further steps, else exit"
-        env: 
-          EXTN_SECRETS: ${{ secrets[format('{0}', env.EXTN_DIR_NAME_WITH_UNDERSCORE)] }}
-        run: echo "HELLO=${{ secrets[format('{0}', env.EXTN_DIR_NAME_WITH_UNDERSCORE)] }}" >> $GITHUB_ENV
+        run: |
+          echo "EXTN_SECRETS=${{ secrets[format('{0}', env.EXTN_DIR_NAME_WITH_UNDERSCORE)] }}" >> $GITHUB_ENV
+          touch .env
+          echo "${{ secrets[format('{0}', env.EXTN_DIR_NAME_WITH_UNDERSCORE)] }}" >> .env
       - name: Echo values
         run: |
           echo ${{ env.EXTN_DIR_NAME_WITH_UNDERSCORE }}
-          echo "${{ env.HELLO }}"
-      - name: Create env file. This file will be used by aio command line to authenticate and deploy extension.
-        if: steps.check-secret-exists.conclusion == 'success'
-        working-directory: ${{ matrix.dir }}
-        run: |
-          # echo "Current directory: $(pwd)"
-          touch .env
-          echo "${{ secrets[format('{0}', env.EXTN_DIR_NAME_WITH_UNDERSCORE)] }}" >> .env
+          echo "${{ env.EXTN_SECRETS }}"
+      # - name: Create env file. This file will be used by aio command line to authenticate and deploy extension.
+      #   working-directory: ${{ matrix.dir }}
+      #   run: |
+      #     # echo "Current directory: $(pwd)"
+      #     touch .env
       - working-directory: ${{ matrix.dir }}
-        if: steps.check-secret-exists.conclusion == 'success'  
+        if: ${{ env.EXTN_SECRETS }} != ''
         run: |
           if [ -f package.json ]; then
             echo "Installing dependencies in ${{ matrix.dir }}"
