@@ -59,7 +59,7 @@ jobs:
           EXTN_SECRETS=${{ secrets[format('{0}', env.EXTN_DIR_NAME_WITH_UNDERSCORE)] }}
           echo "EXTN_SECRETS=$EXTN_SECRETS" >> $GITHUB_ENV
           touch .env
-          echo "$EXTN_SECRETS" >> .env
+          echo "${{ env.EXTN_SECRETS }}" >> .env
       # - name: Echo values
       #   run: |
       #     echo ${{ env.EXTN_DIR_NAME_WITH_UNDERSCORE }}
