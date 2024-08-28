@@ -57,18 +57,19 @@ jobs:
       - name: "export env variables secret for ${{ matrix.dir }} if exists and run further steps, else exit"
         run: |
           echo "EXTN_SECRETS=${{ secrets[format('{0}', env.EXTN_DIR_NAME_WITH_UNDERSCORE)] }}" >> $GITHUB_ENV
-          touch .env
-          echo "${{ secrets[format('{0}', env.EXTN_DIR_NAME_WITH_UNDERSCORE)] }}" >> .env
-      - name: Echo values
-        run: |
-          echo ${{ env.EXTN_DIR_NAME_WITH_UNDERSCORE }}
-          echo "${{ env.EXTN_SECRETS }}"
-      # - name: Create env file. This file will be used by aio command line to authenticate and deploy extension.
-      #   working-directory: ${{ matrix.dir }}
+          if [ env.EXTN_SECRETS == '' ]; then
+            echo "No env variables secret found for ${{ matrix.dir }}. No further steps will be executed."
+          else
+            echo "Env variables secret found for ${{ matrix.dir }}."
+            touch .env
+            echo "${{ secrets[format('{0}', env.EXTN_DIR_NAME_WITH_UNDERSCORE)] }}" >> .env
+          fi
+      # - name: Echo values
       #   run: |
-      #     # echo "Current directory: $(pwd)"
-      #     touch .env
-      - working-directory: ${{ matrix.dir }}
+      #     echo ${{ env.EXTN_DIR_NAME_WITH_UNDERSCORE }}
+      #     echo "${{ env.EXTN_SECRETS }}"
+      - name: Install npm dependencies
+        working-directory: ${{ matrix.dir }}
         if: env.EXTN_SECRETS != ''
         run: |
           if [ -f package.json ]; then
