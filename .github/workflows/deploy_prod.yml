@@ -60,7 +60,6 @@ jobs:
         run: | 
           echo "Secret: ${{ env.EXTN_SECRETS }}"
       - name: Echo values
-        if: steps.check-secret-exists.conclusion == 'success'
         run: |
           echo ${{ env.EXTN_DIR_NAME_WITH_UNDERSCORE }}
           echo "_Secret: ${{ env.EXTN_SECRETS }}"
