@@ -56,14 +56,9 @@ jobs:
           echo "EXTN_DIR_NAME_WITH_UNDERSCORE=$(echo "$EXTN_DIR_NAME_WITH_UNDERSCORE")" >> $GITHUB_ENV
       - name: "export env variables secret for ${{ matrix.dir }} if exists and run further steps, else exit"
         run: |
-          EXTN_SECRETS=${{ secrets[format('{0}', env.EXTN_DIR_NAME_WITH_UNDERSCORE)] }}
-          echo "EXTN_SECRETS=$EXTN_SECRETS" >> $GITHUB_ENV
+          echo "EXTN_SECRETS=${{ secrets[format('{0}', env.EXTN_DIR_NAME_WITH_UNDERSCORE)] }}" >> $GITHUB_ENV
           touch .env
-          echo "${{ env.EXTN_SECRETS }}" >> .env
-      # - name: Echo values
-      #   run: |
-      #     echo ${{ env.EXTN_DIR_NAME_WITH_UNDERSCORE }}
-      #     echo "${{ env.EXTN_SECRETS }}"
+          echo "${{ secrets[format('{0}', env.EXTN_DIR_NAME_WITH_UNDERSCORE)] }}" >> .env
       - name: Install npm dependencies
         working-directory: ${{ matrix.dir }}
         if: env.EXTN_SECRETS != ''
