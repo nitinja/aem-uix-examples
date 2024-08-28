@@ -35,7 +35,7 @@ jobs:
         id: set-output
         run: echo "changed_directories={\"dir\":${{ steps.changed-files.outputs.all_changed_files }}}" >> "$GITHUB_OUTPUT"
 
-  install-deps:
+  deploy-prod:
     runs-on: ubuntu-latest
     if: ${{ needs.find-changed-dirs.outputs.changed_directories != '' }} # Without it, the strategy parser will fail if the changed_directories is empty.
     strategy:
@@ -54,6 +54,11 @@ jobs:
         run: |
           EXTN_DIR_NAME_WITH_UNDERSCORE=${EXTN_DIR_NAME//-/_}
           echo "EXTN_DIR_NAME_WITH_UNDERSCORE=$(echo "$EXTN_DIR_NAME_WITH_UNDERSCORE")" >> $GITHUB_ENV
+      - name: "check is MY_SECRET exists"
+        env: 
+          EXTN_SECRETS: ${{ secrets[format('{0}', env.EXTN_DIR_NAME_WITH_UNDERSCORE)] }}
+        if: ${{ env.EXTN_SECRETS == '' }}
+        run: echo "Secret does not exist"; exit 1
       - name: Echo values
         run: |
           echo ${{ env.EXTN_DIR_NAME_WITH_UNDERSCORE }}
