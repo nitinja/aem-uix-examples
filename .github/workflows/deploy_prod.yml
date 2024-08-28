@@ -57,12 +57,12 @@ jobs:
       - name: "export env variables secret for ${{ matrix.dir }} if exists and run further steps, else exit"
         run: |
           echo "EXTN_SECRETS=${{ secrets[format('{0}', env.EXTN_DIR_NAME_WITH_UNDERSCORE)] }}" >> $GITHUB_ENV
-          if [ env.EXTN_SECRETS == '' ]; then
-            echo "No env variables secret found for ${{ matrix.dir }}. No further steps will be executed."
-          else
+          if [ env.EXTN_SECRETS ]; then
             echo "Env variables secret found for ${{ matrix.dir }}."
             touch .env
             echo "${{ secrets[format('{0}', env.EXTN_DIR_NAME_WITH_UNDERSCORE)] }}" >> .env
+          else
+            echo "No env variables secret found for ${{ matrix.dir }}. No further steps will be executed."
           fi
       # - name: Echo values
       #   run: |
