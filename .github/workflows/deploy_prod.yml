@@ -35,7 +35,7 @@ jobs:
         id: set-output
         run: echo "changed_directories={\"dir\":${{ steps.changed-files.outputs.all_changed_files }}}" >> "$GITHUB_OUTPUT"
 
-  deploy-prod:
+  install-deps:
     runs-on: ubuntu-latest
     if: ${{ needs.find-changed-dirs.outputs.changed_directories != '' }} # Without it, the strategy parser will fail if the changed_directories is empty.
     strategy:
@@ -54,14 +54,16 @@ jobs:
         run: |
           EXTN_DIR_NAME_WITH_UNDERSCORE=${EXTN_DIR_NAME//-/_}
           echo "EXTN_DIR_NAME_WITH_UNDERSCORE=$(echo "$EXTN_DIR_NAME_WITH_UNDERSCORE")" >> $GITHUB_ENV
-      - name: "export env variables secret for ${{ matrix.dir }} if exists and run further steps, else exit"
+      - name: Echo values
         run: |
-          echo "EXTN_SECRETS=${{ secrets[format('{0}', env.EXTN_DIR_NAME_WITH_UNDERSCORE)] }}" >> $GITHUB_ENV
+          echo ${{ env.EXTN_DIR_NAME_WITH_UNDERSCORE }}
+      - name: Create env file. This file will be used by aio command line to authenticate and deploy extension.
+        working-directory: ${{ matrix.dir }}
+        run: |
+          # echo "Current directory: $(pwd)"
           touch .env
           echo "${{ secrets[format('{0}', env.EXTN_DIR_NAME_WITH_UNDERSCORE)] }}" >> .env
-      - name: Install npm dependencies
-        working-directory: ${{ matrix.dir }}
-        if: env.EXTN_SECRETS != ''
+      - working-directory: ${{ matrix.dir }}
         run: |
           if [ -f package.json ]; then
             echo "Installing dependencies in ${{ matrix.dir }}"
@@ -70,13 +72,11 @@ jobs:
             exit 0
           fi
       - name: Setup AIO CLI
-        if: env.EXTN_SECRETS != ''  
         working-directory: ${{ matrix.dir }}
         run: |
           # echo "Current directory: $(pwd)"
           sudo npm install -g @adobe/aio-cli
       - name: deploy to prod
-        if: env.EXTN_SECRETS != ''
         working-directory: ${{ matrix.dir }}
         run: |
           # echo "Current directory: $(pwd)"
