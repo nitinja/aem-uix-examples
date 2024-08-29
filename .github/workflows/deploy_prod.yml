@@ -54,22 +54,23 @@ jobs:
         run: |
           EXTN_DIR_NAME_WITH_UNDERSCORE=${EXTN_DIR_NAME//-/_}
           echo "EXTN_DIR_NAME_WITH_UNDERSCORE=$(echo "$EXTN_DIR_NAME_WITH_UNDERSCORE")" >> $GITHUB_ENV
-      - name: Echo values
-        run: |
-          echo ${{ env.EXTN_DIR_NAME_WITH_UNDERSCORE }}
-      - name: Create env file. This file will be used by aio command line to authenticate and deploy extension.
+      - name: Write secret for this extension as env file. This file will be used by aio command line to authenticate and deploy extension.
         working-directory: ${{ matrix.dir }}
         run: |
           # echo "Current directory: $(pwd)"
           touch .env
           echo "${{ secrets[format('{0}', env.EXTN_DIR_NAME_WITH_UNDERSCORE)] }}" >> .env
           echo "EXTN_SECRETS_FOUND=$(echo "${{ secrets[format('{0}', env.EXTN_DIR_NAME_WITH_UNDERSCORE)] }}")" >> $GITHUB_ENV
+      - name: Check secret exists for modified extension directory. If not, further steps will be skipped.
+        if: env.EXTN_SECRETS_FOUND == ''
+        run: |
+            echo "Secret for ${{ matrix.dir }} extension directory not found. Skipping further steps."
       - name: Install dependencies
         if: env.EXTN_SECRETS_FOUND != ''
         working-directory: ${{ matrix.dir }}
         run: |
           if [ -f package.json ]; then
-            echo "Installing dependencies in ${{ matrix.dir }}, "
+            echo "Installing dependencies in ${{ matrix.dir }}"
             echo ${{ env.EXTN_SECRETS_FOUND }}
             npm install
             npm install -g @adobe/aio-cli
