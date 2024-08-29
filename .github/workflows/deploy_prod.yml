@@ -35,7 +35,7 @@ jobs:
         id: set-output
         run: echo "changed_directories={\"dir\":${{ steps.changed-files.outputs.all_changed_files }}}" >> "$GITHUB_OUTPUT"
 
-  install-deps:
+  deploy-to-prod:
     runs-on: ubuntu-latest
     if: ${{ needs.find-changed-dirs.outputs.changed_directories != '' }} # Without it, the strategy parser will fail if the changed_directories is empty.
     strategy:
@@ -63,10 +63,12 @@ jobs:
           # echo "Current directory: $(pwd)"
           touch .env
           echo "${{ secrets[format('{0}', env.EXTN_DIR_NAME_WITH_UNDERSCORE)] }}" >> .env
+          echo "EXTN_SECRETS_FOUND=$(echo "${{ secrets[format('{0}', env.EXTN_DIR_NAME_WITH_UNDERSCORE)] }} == ''")" >> $GITHUB_ENV
       - working-directory: ${{ matrix.dir }}
         run: |
           if [ -f package.json ]; then
-            echo "Installing dependencies in ${{ matrix.dir }}"
+            echo "Installing dependencies in ${{ matrix.dir }}, "
+            echo ${{ env.EXTN_SECRETS_FOUND }}
             npm install
           else
             exit 0
